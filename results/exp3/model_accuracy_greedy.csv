@@ -1,0 +1,16 @@
+model,arc_challenge,arc_easy,mmlu
+Mistral-7B-Instruct-v0.3,0.7116,0.8932,0.5318
+OLMo-2-1124-7B-Instruct,0.7402,0.8856,0.5492
+Phi-3.5-mini-instruct,0.8526,0.9572,0.6488
+Phi-4-mini-instruct,0.8318,0.9368,0.6404
+Qwen2.5-0.5B-Instruct,0.4014,0.5954,0.3732
+Qwen2.5-1.5B-Instruct,0.7348,0.9066,0.5786
+Qwen2.5-14B-Instruct,0.9232,0.9734,0.7426
+Qwen2.5-3B-Instruct,0.8262,0.9438,0.6286
+Qwen2.5-7B-Instruct,0.8812,0.965,0.7018
+Qwen3-1.7B,0.7398,0.9006,0.5372
+Qwen3-4B,0.8734,0.9516,0.6674
+Qwen3-8B,0.9096,0.968,0.7084
+SmolLM2-1.7B-Instruct,0.5556,0.7836,0.4418
+Yi-1.5-9B-Chat,0.8642,0.9442,0.6614
+granite-3.1-8b-instruct,0.82,0.9396,0.6134

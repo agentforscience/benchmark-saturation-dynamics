@@ -1,0 +1,45 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Why shape matters so little: a back-of-the-envelope account}
+\label{sec:mechanism}
+
+A short calculation explains the three main findings. Consider the Rasch case of \eqref{eq:irt} ($a_i = 1$, $c = 0$) and a tight cohort, so we can linearise scores around the cohort centre $\mu$. Write $v = \frac{1}{\Nitems}\sum_i P_i(1-P_i)$ for the mean item variance at $\mu$. The slope of expected accuracy in ability is $\partial \bar{s}/\partial\theta = v$, so the signal is $\Var_k(\bar{s}_k) \approx v^2 \sigc^2$, while binomial noise is about $v/\Nitems$. Substituting into \eqref{eq:rho} gives
+\begin{equation}
+\rho \approx \frac{\Nitems v \sigc^2}{\Nitems v \sigc^2 + 1}, \qquad\text{so}\qquad \rho < 0.5 \iff v < \frac{1}{\Nitems\sigc^2}.
+\label{eq:approx}
+\end{equation}
+This approximation is ours; we use it only to interpret the exact computations above.
+
+\para{{\bf Why does shape matter little?}} Because $x(1-x)$ is concave and $x(1-x) \le 1-x$, the mean item variance is capped by the error mass: $v \le A(1-A) \le 1 - A$, with equality on the left only when all items are equally hard. At a fixed accuracy, no difficulty shape can create more informative items than the remaining errors allow. Shape only decides how much of this capped budget is used. Shapes without a long hard tail keep the errors on items that cohort models solve part of the time, so $v$ stays close to its cap. A heavy hard tail concentrates errors on items that no model in the cohort solves ($P_i \approx 0$), which contribute almost nothing to $v$. This is exactly the ordering we observe: the hard-tailed shape saturates first (\tabref{tab:astar}, \tabref{tab:resampled}).
+
+\para{{\bf Why do size and cohort spread dominate?}} The bound $v \le 1-A$ and \eqref{eq:approx} imply that discrimination is lost no later than $\astar \le 1 - 1/(\Nitems\sigc^2)$. This gives 97.8\% for the base setting, 88.9\% at $\Nitems = 100$, 99.4\% at $\Nitems = 2000$, 91.1\% at $\sigc = 0.15$, and 99.4\% at $\sigc = 0.6$. The exact $\astar$ values in \tabref{tab:astar} lie below this bound in every case and follow its ordering. Both $\Nitems$ and $\sigc^2$ enter as a product, which is why a tight cohort and a small benchmark have the same effect.
+
+\para{{\bf Why does variance help only large benchmarks?}} Wider difficulties extend the range of abilities for which some items sit near the cohort, which lengthens lifetime when $\Nitems$ is large enough that the local density stays above $1/(\Nitems \sigc^2)$. With few items, spreading them thins the density everywhere, so $v$ never gets large enough, and lifetime shrinks (\figref{fig:exp1_lifetime}, $\Nitems = 100$).
+
+\para{{\bf When does seed noise dominate?}} Adding seed noise of $r\,v/\Nitems$ with $r \approx 0.40$ (Exp~3), the seed share becomes $r/(r + \Nitems v \sigc^2)$, which exceeds 0.5 only when $\Nitems v \sigc^2 < r$, a stricter condition than the $\rho < 0.5$ condition in \eqref{eq:approx}. This matches our measurements qualitatively: seeds dominate only for tight cohorts on small subsets at $\ge 99\%$ accuracy, and the seed share falls as $\Nitems$ grows (0.51 at 50 items to 0.18 at 500 for the \arce top 6), though more slowly than the $1/\Nitems$ scaling of this approximation would suggest.
+
+\subsection{Implications}
+
+\para{For benchmark builders.} The most useful lever is {\em item informativeness near the frontier}: the number of items, weighted by their discrimination, whose difficulty lies close to the ability of the models that will be compared. A wide or heavy-tailed histogram does not provide this automatically; a hard tail spends items on questions no current model can answer. Builders should keep $\Nitems$ large, budget items near the expected frontier (\eg with an adaptive or IRT-targeted item bank~\citep{zhuang2023efficiently,polo2024tinybenchmarks}), and refresh the bank as the frontier moves.
+
+\para{For leaderboard readers.} On today's large benchmarks, rank differences are rarely seed artefacts: predicted seed shares for the \leaderboard top-20 are at most 14\%. The exception is near-tied frontier models on small test sets. When a test set has $\le 200$ items, accuracy is above 95\%, and the top models are within 1--2 points, rank differences should be reported with seed-level and item-level error bars~\citep{miller2024adding}. Even then, the top-1 position is fragile: a single seed recovered the seed-averaged winner only 40\% of the time on \arce.
+
+\para{For leaderboard maintainers.} Several months of the \leaderboard had $\rho \approx 0$ on every benchmark because near-duplicate merges filled the top 20. Deduplicating cohorts by base model would remove this form of saturation, which no benchmark design can fix.
+
+\subsection{Surprises}
+
+Three findings were unexpected. First, 26\% of \arcc items are answered below chance by the model population, presumably because of adversarial distractors; this breaks standard guessing-floor IRT models, and we used a Rasch model instead. Second, as noted above, leaderboard top-20s often saturate because of merges rather than the benchmark itself. Third, Qwen3-8B, Phi-3.5 and SmolLM2 put only 12--33\% of next-token probability on the bare answer letters. Renormalised accuracies are still sensible (\eg Qwen3-8B reaches 91\% on \arcc), but this adds format-sensitivity noise on top of option order.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+\para{Seed type.} Our seeds are {\em evaluation} seeds (option order and sampling). Training-seed variance, as measured by \citet{madaan2024quantifying}, could not be measured here and may be larger, which would lower the accuracy at which seeds dominate.
+
+\para{Model cohort.} Exp~3 uses 15 open models of 0.5--14B parameters rather than frontier API models; no API keys were available, and two gated model families (Llama-3.1-8B, Gemma-2-9B) were not accessible. \arc and \mmlu are likely in these models' training data, which affects absolute accuracy but not the variance decomposition.
+
+\para{Leaderboard data.} Exp~2 and~4 use \leaderboard data (open models from 2023--24, log-probability scoring), which saturated relatively early; per-item v2 data is gated. The ability axis in Exp~2 is an external composite rather than calendar time. Calendar-time lifetimes were measured only for six benchmarks (Exp~4) and are confounded by cohort composition.
+
+\para{Model fit and resampling.} The Rasch model is unidimensional; pooling \mmlu subjects and per-task difficulty variances carries multidimensionality and prior-shrinkage effects, and extreme items are bounded by the $\Normal(0, 3^2)$ prior. Importance resampling from finite pools only approximates target shapes (\eg the achieved kurtosis was 4--5 for $t_3$ and 10--16 for \lnhard). Item-bootstrap intervals for the seed share are biased upward, because duplicated items inflate seed variance; this makes our ``below 0.5'' conclusions conservative.
+
+\para{Broader impact.} Our results are meant to make benchmark rankings more trustworthy. A possible misuse is to dismiss real capability gaps as ``noise''; our measurements show that on large benchmarks this is rarely justified.

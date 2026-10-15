@@ -1,0 +1,18 @@
+{
+  "greedy": {
+    "share_hi_mean": 0.4569660546931339,
+    "n_hi": 9,
+    "share_lo_mean": 0.14715040833069362,
+    "n_lo": 5,
+    "spearman_acc_share": 0.9642857142857141,
+    "spearman_p": 7.072303009204264e-09
+  },
+  "sampled": {
+    "share_hi_mean": 0.35539383577785344,
+    "n_hi": 9,
+    "share_lo_mean": 0.10833714478675245,
+    "n_lo": 5,
+    "spearman_acc_share": 0.9749999999999999,
+    "spearman_p": 7.143705965229251e-10
+  }
+}

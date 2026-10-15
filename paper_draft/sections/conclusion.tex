@@ -1,0 +1,8 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We asked whether the shape of a benchmark's item-difficulty distribution decides when it stops ranking models, and whether evaluation-seed noise dominates rankings at that point. Across a matched-variance IRT model, 220 leaderboard models on 62 real tasks, real items resampled into prescribed shapes, and 15 open LLMs evaluated under 10 seeds, the answer is mostly no. All difficulty shapes lose discrimination within about 1.5 points of each other, and a heavy hard tail saturates first, not last. The saturation point is set mainly by the number of items (80--84\% accuracy at 100 items, 96\% at 500, 99\% at 2000) and by how close the competing models are. Difficulty variance predicts lifetime only among equal-size benchmarks ($r = 0.92$ in simulation) and not across real tasks ($r = -0.06$). Seed noise is about 40\% of item-sampling noise and dominates only for near-tied models on small test sets at $\ge 99\%$ accuracy.
+
+The key takeaway is simple: {\bf to keep a benchmark useful, add informative items near the frontier and keep it large; the shape of its difficulty histogram is a second-order concern.}
+
+Future work should repeat the seed analysis with frontier API models and training-seed replicates, measure lifetimes in calendar time using per-item data with release dates (\eg leaderboard v2 or HELM~\citep{liang2023holistic}), test the summed Fisher information at the cohort's ability as a direct lifetime predictor, and study how deduplicating leaderboard cohorts by base model changes apparent saturation.

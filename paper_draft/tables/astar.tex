@@ -1,0 +1,21 @@
+\begin{table}[t]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lccccccc@{}}
+        \toprule
+        \textbf{Setting} & \textbf{point} & \textbf{uniform} & \textbf{normal} & \textbf{Laplace} & \textbf{$t_3$} & \textbf{\lnhard} & \textbf{\lneasy} \\
+        \midrule
+        Base ($\Nitems{=}500$, $\sigc{=}0.3$, SD${=}1.5$) & 96.4 & {\bf 96.6} & 96.5 & 96.2 & 96.1 & 95.2 & 96.5 \\
+        \midrule
+        $\Nitems = 100$ items          & {\bf 84.5} & 82.1 & 80.1 & 80.6 & 80.8 & 79.1 & 84.4 \\
+        $\Nitems = 2000$ items         & {\bf 99.0} & {\bf 99.0} & {\bf 99.0} & {\bf 99.0} & 98.8 & 98.5 & {\bf 99.0} \\
+        Tight cohort $\sigc = 0.15$    & {\bf 87.5} & 86.4 & 85.0 & 84.4 & 85.0 & 83.1 & {\bf 87.5} \\
+        Wide cohort $\sigc = 0.6$      & {\bf 99.0} & {\bf 99.0} & {\bf 99.0} & {\bf 99.0} & 98.9 & 98.5 & {\bf 99.0} \\
+        Wide difficulties SD $= 3$     & 96.4 & {\bf 96.7} & 95.7 & 94.5 & 94.8 & 92.4 & 96.5 \\
+        Guessing $c = 0.25$            & 96.5 & {\bf 96.6} & 96.4 & 96.0 & 96.0 & 94.8 & 96.5 \\
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{{\bf Saturation accuracy $\astar$ (cohort mean accuracy, \%, at which $\rho < 0.5$) in the IRT model.} Values are means over 20 item draws; difficulty SD is matched within each row. Higher means the benchmark discriminates longer; the latest-saturating shape in each row is in {\bf bold}. Shape moves $\astar$ by about 1.5 points in the base setting, and the heavy hard tail (\lnhard) saturates {\em earliest} in every row. In contrast, item count ($\Nitems$) and cohort spread ($\sigc$) move $\astar$ by 15--20 points.}
+    \label{tab:astar}
+\end{table}

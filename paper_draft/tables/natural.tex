@@ -1,0 +1,21 @@
+\begin{table}[t]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}llcccccc@{}}
+        \toprule
+        & & & \multicolumn{2}{c}{\textbf{Seed share}} & \multicolumn{2}{c}{\textbf{Ranking stability (greedy)}} \\
+        \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+        \textbf{Benchmark} & \textbf{Cohort} & \textbf{Mean acc.} & \textbf{greedy} & \textbf{sampled} & \textbf{Kendall $\tau$} & \textbf{Pair flip prob.} \\
+        \midrule
+        \mmlu & all 15 & 60\%   & 0.02 & 0.02 & 0.95 & 0.03 \\
+        \mmlu & top 6  & 69\%   & 0.10 & 0.10 & 0.90 & 0.06 \\
+        \arcc & all 15 & 78\%   & 0.01 & 0.01 & 0.95 & 0.04 \\
+        \arcc & top 6  & 88\%   & 0.10 & 0.09 & 0.89 & 0.09 \\
+        \arce & all 15 & 90\%   & 0.01 & 0.01 & 0.91 & 0.06 \\
+        \arce & top 6  & 96.0\% & {\bf 0.18} & {\bf 0.15} & 0.81 & 0.14 \\
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{{\bf Seed noise on natural 500-item benchmarks (15 open LLMs, 10 option-order seeds).} Seed share is the fraction of score variance due to evaluation seeds; Kendall $\tau$ compares a single-seed ranking with the seed-averaged ranking; pair flip probability is the chance that two single-seed runs order a model pair differently. Even for the near-ceiling \arce top-6 cohort (96\% accuracy), seeds explain only 18\% of score variance ({\bf bold}: the largest share). Item-bootstrap upper bounds of the seed share stay below 0.5 for every row (largest: 0.46, \arce top 6).}
+    \label{tab:natural}
+\end{table}

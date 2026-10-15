@@ -1,0 +1,8 @@
+{
+  "ARC": 6,
+  "GSM8K": 10,
+  "HellaSwag": 8,
+  "MMLU": 10,
+  "TruthfulQA": 9,
+  "Winogrande": 7
+}

@@ -1,0 +1,59 @@
+\section{Methods}
+\label{sec:method}
+
+Our main question is: {\bf does the shape or variance of the item-difficulty distribution decide the mean accuracy at which a benchmark stops discriminating between models, and does evaluation-seed noise dominate rankings at that point?} We first define the quantities we measure (\secref{sec:defs}), then describe four experiments (\secref{sec:exp1}--\secref{sec:exp4}). Exp~1 is a controlled IRT model; Exp~2--4 use real LLM responses and re-test every claim from Exp~1.
+
+\subsection{Definitions}
+\label{sec:defs}
+
+\para{Cohort.} A cohort is a set of $\Kmod$ contemporaneous models of similar ability, standing for the current frontier. In the IRT model, cohort abilities are $\theta_k \sim \Normal(\mu, \sigc^2)$; moving the cohort centre $\mu$ upward stands in for progress over time.
+
+\para{Reliability.} We measure discrimination by the reliability $\rho$, the share of between-model score variance that is {\em not} noise. Let $\bar{s}_k$ be the expected accuracy of model $k$ on an $\Nitems$-item benchmark and $\sigma_k^2$ the variance of its observed accuracy. Then
+\begin{equation}
+\rho = \frac{\Var_k(\bar{s}_k)}{\Var_k(\bar{s}_k) + \frac{1}{\Kmod}\sum_k \sigma_k^2}.
+\label{eq:rho}
+\end{equation}
+Thus $1-\rho$ is the noise share of ranking variance, and $\rho < 0.5$ means noise outweighs capability. We use $\rho < 0.5$ as the threshold for ``lost discriminative power''. On real data we estimate $\rho$ either by split-half reliability across the cohort (Spearman--Brown corrected) or as $1 - \text{binomial noise}/\text{observed variance}$.
+
+\para{Saturation accuracy and lifetime.} The saturation accuracy $\astar$ is the cohort mean accuracy at which $\rho$ first falls below 0.5 as the cohort's ability rises. We also report thresholds of $\rho = 0.7$ and Kendall $\tau = 0.5$ between observed and true rankings. The effective lifetime is the length of the ability axis over which $\rho \ge 0.5$; under steady progress this is proportional to time.
+
+\subsection{Exp 1: Controlled IRT model}
+\label{sec:exp1}
+
+\para{Response model.} Model $k$ answers item $i$ correctly with probability
+\begin{equation}
+P_{ik} = c + (1-c)\,\sigmoid\!\big(a_i(\theta_k - b_i)\big), \qquad a_i \sim \mathrm{LogNormal}(0, 0.3^2),
+\label{eq:irt}
+\end{equation}
+with guessing floor $c = 0$ unless stated otherwise. We stress that this simulates item {\em responses}; it is not a simulation of LLMs.
+
+\para{Difficulty shapes.} We draw difficulties $b_i$ from seven shapes with standard deviation matched to 1.5 logits: point mass (all items equally hard), uniform, normal, Laplace, Student-$t_3$, a log-normal with a long {\em hard} tail (\lnhard), and its mirror image with a long {\em easy} tail (\lneasy).
+
+\para{Protocol.} The base setting uses $\Nitems = 500$ items, $\Kmod = 20$ models and $\sigc = 0.3$ logits. We sweep the cohort centre over 221 ability levels. Because the score of model $k$ is a sum of independent Bernoulli variables, we compute its mean and variance exactly (Poisson-binomial), which gives $\rho$ in \eqref{eq:rho} without sampling noise; Kendall $\tau$ is estimated with 200 Monte Carlo replicates. Each shape is replicated with 20 independent item draws. We repeat the analysis under ten sensitivity settings: $\Nitems \in \{100, 2000\}$, $\sigc \in \{0.15, 0.6\}$, difficulty SD $\in \{0.75, 3\}$, guessing $c = 0.25$, $\Kmod = 10$, and fixed $a_i = 1$. To test H3, we draw 600 random benchmark configurations (random shape, SD in $[0.25, 4]$, $\Nitems \in \{100, 250, 500, 1000\}$) and correlate their lifetime with $\Var(b)$.
+
+\subsection{Exp 2: Real leaderboard responses}
+\label{sec:exp2}
+
+\para{Data.} We download per-item correctness from the public \leaderboard ``details'' datasets~\citep{beeching2023open}. We sample 245 models stratified across 20 quantile bins of the leaderboard average plus the top 25; the 220 models with results on all 62 tasks are used. The tasks are \arcc~\citep{clark2018think} (25-shot), \hellaswag~\citep{zellers2019hellaswag} (10-shot), \truthfulqa-mc1~\citep{lin2022truthfulqa}, \winogrande~\citep{sakaguchi2020winogrande} (5-shot), \gsm~\citep{cobbe2021training} (5-shot), and the 57 \mmlu subjects~\citep{hendrycks2021measuring} (5-shot), with 91--10{,}019 items per task. We key items by a hash of their normalised text and keep items answered by at least 95\% of models, which leaves no missing cells.
+
+\para{Calibration/evaluation split.} To avoid selection leakage, we order models by an {\em external} ability score (the mean $z$-score on all benchmarks except the task under study) and assign alternate models to a calibration half and an evaluation half (about 110 each). We estimate item difficulties only on the calibration half and measure discrimination only on the evaluation half.
+
+\para{Analyses.} (a)~We fit a Rasch model per task (joint MAP with an $\Normal(0, 3^2)$ prior, L-BFGS) and record $\Var(b)$, SD, IQR, 90\% range, skew, and kurtosis. We first tried a fixed 25\% guessing floor and rejected it: 26\% of \arcc items are answered {\em below} chance by the model population, which a guessing floor cannot fit. (b)~We slide cohorts of $\Kmod = 20$ evaluation models along the external ability axis (step 2) and compute split-half reliability on random 90-item subsamples, so all tasks have equal $\Nitems$. The {\em empirical lifetime} is the fraction of cohorts with $\rho \ge 0.5$. (c)~A {\em model-based lifetime} evaluates the Exp-1 $\rho$-curve with each task's real fitted difficulties ($\Nitems = 90$, cohort spread estimated from data), in units of the population $\theta$-SD. (d)~We correlate both lifetimes with $\Var(b)$ across the 62 tasks (Pearson and Spearman, 2{,}000-sample bootstrap CIs, partial correlation given mean accuracy). (e)~As a direct test of H1, we build 200-item benchmarks from the full \mmlu (14k items) and \hellaswag (10k items) pools by importance resampling to prescribed shapes (uniform, normal, Laplace, $t_3$, \lnhard; SD 1 logit), at 12 difficulty locations with 6 replicates per shape, and score them with the evaluation half's real responses.
+
+\subsection{Exp 3: Seed variance of real LLMs}
+\label{sec:exp3}
+
+\para{Models and items.} We run 15 open instruction-tuned LLMs locally in bf16: Qwen2.5-\{0.5, 1.5, 3, 7, 14\}B-Instruct~\citep{qwen2024qwen25}, Qwen3-\{1.7, 4, 8\}B with thinking disabled~\citep{yang2025qwen3}, SmolLM2-1.7B-Instruct~\citep{allal2025smollm2}, Phi-3.5-mini-instruct~\citep{abdin2024phi3}, Phi-4-mini-instruct~\citep{microsoft2025phi4mini}, OLMo-2-1124-7B-Instruct~\citep{olmo2024olmo2}, granite-3.1-8b-instruct, Yi-1.5-9B-Chat~\citep{young2024yi}, and Mistral-7B-Instruct-v0.3~\citep{jiang2023mistral}. We use 1{,}500 items: 500 each from the test splits of \arce, \arcc, and \mmlu.
+
+\para{Prompting and seeds.} We use a 0-shot chat-template multiple-choice prompt followed by the assistant prefix ``The answer is'', and read the answer from the next-token probabilities of the letters A--D, renormalised over these four letters. Each item is evaluated under $S = 10$ seeds: seed 0 keeps the original option order and seeds 1--9 apply random permutations (15{,}000 forward passes per model). The {\em greedy} score takes the argmax letter, so only option order varies; the {\em sampled} score draws the answer from the letter distribution at temperature 1, adding sampling noise.
+
+\para{Variance decomposition.} Let $\sigma^2_{\text{seed}}$ be the mean over models of the across-seed variance of accuracy. The capability variance is $\sigma^2_{\text{cap}} = \Var_m(\bar{s}_m) - \sigma^2_{\text{seed}}/S$, where $\bar{s}_m$ is the seed-averaged accuracy of model $m$. The seed share is $\sigma^2_{\text{seed}} / (\sigma^2_{\text{seed}} + \sigma^2_{\text{cap}})$. We also report Kendall $\tau$ between a single-seed ranking and the seed-averaged ranking, the probability that two single-seed runs flip the order of a model pair, and agreement on the top-1 model. We study (i)~the natural 500-item benchmarks with cohorts of all 15 models, the top 10, and the top 6; and (ii)~difficulty-stratified 150-item subsets (15 windows from hardest to easiest), where item difficulty is estimated on the {\em weaker} 7 models and seed share is measured on the {\em stronger} 8, so that selection does not leak into the measurement.
+
+\para{Cross-check.} We fit the per-item seed-noise constant $\kappa = \Nitems \cdot \Var_{\text{seed}}(\text{acc}) \approx r \cdot \text{acc}(1-\text{acc})$ and apply it to the score spreads of the real leaderboard top-20.
+
+\subsection{Exp 4: Leaderboard history}
+\label{sec:exp4}
+
+For each month from September 2023 to June 2024, we take the top 20 unique models by leaderboard average among all submissions up to that month (over 7{,}000 entries) and compute, for each of the six benchmarks, the cohort mean, SD, binomial noise, and $\rho$.
+
+\para{Implementation.} All analyses use Python with NumPy, SciPy, statsmodels and PyTorch; random seed 42 throughout. Exp~1, 2 and 4 run on a 32-core CPU; Exp~3 runs on two RTX A6000 GPUs (1--6 minutes per model). No paid API is used.

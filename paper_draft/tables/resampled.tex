@@ -1,0 +1,21 @@
+\begin{table}[t]
+    \centering
+    \small
+    \begin{tabular}{@{}llcccc@{}}
+        \toprule
+        & & \multicolumn{4}{c}{\textbf{Cohort mean accuracy}} \\
+        \cmidrule(lr){3-6}
+        \textbf{Item pool} & \textbf{Shape} & 80--85\% & 85--90\% & 90--95\% & 95--100\% \\
+        \midrule
+        \multirow{5}{*}{\mmlu} & uniform              & 0.82 & 0.82 & {\bf 0.81} & {\bf 0.68} \\
+                               & normal               & 0.83 & 0.80 & 0.76 & 0.62 \\
+                               & Laplace              & {\bf 0.87} & 0.80 & 0.74 & 0.59 \\
+                               & $t_3$ (heavy tails)  & {\bf 0.87} & {\bf 0.85} & 0.78 & 0.62 \\
+                               & \lnhard (heavy hard tail) & {\bf 0.87} & 0.82 & 0.69 & 0.47 \\
+        \midrule
+        \hellaswag & all five shapes & 0.98 & 0.98 & 0.97 & 0.55--0.62 \\
+        \bottomrule
+    \end{tabular}
+    \caption{{\bf Direct test of H1 with real items.} Mean split-half reliability of 200-item benchmarks resampled from real \mmlu or \hellaswag items into prescribed difficulty shapes (SD 1 logit) and scored with real responses of $\Kmod = 20$ held-out models. Best per column in {\bf bold}. Uniform does {\em not} saturate at 85\%; it is the most robust shape above 90\% accuracy on \mmlu, and the heavy hard tail is the least robust.}
+    \label{tab:resampled}
+\end{table}

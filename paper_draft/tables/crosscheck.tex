@@ -1,0 +1,18 @@
+\begin{table}[t]
+    \centering
+    \small
+    \begin{tabular}{@{}lcccc@{}}
+        \toprule
+        \textbf{Benchmark} & \textbf{Top-20 mean} & \textbf{Top-20 SD} & \textbf{Pred.\ seed SD} & \textbf{Pred.\ seed share} \\
+        \midrule
+        \arc        & 76.6\% & 2.6 pts & 0.78 pts & 0.09 \\
+        \hellaswag  & 89.4\% & 1.7 pts & 0.19 pts & 0.01 \\
+        \mmlu       & 78.1\% & 1.1 pts & 0.22 pts & 0.04 \\
+        \truthfulqa & 73.6\% & 5.0 pts & 0.97 pts & 0.04 \\
+        \winogrande & 85.5\% & 1.6 pts & 0.62 pts & {\bf 0.14} \\
+        \gsm        & 79.7\% & 3.8 pts & 0.70 pts & 0.03 \\
+        \bottomrule
+    \end{tabular}
+    \caption{{\bf Predicted seed share for the real \leaderboard top-20 (June 2024).} We apply the seed-noise rate fitted in Exp~3 ($\Nitems \cdot \Var_{\text{seed}} \approx 0.40\,\text{acc}(1-\text{acc})$) to each benchmark's size and top-20 score spread. The largest predicted share ({\bf bold}) is 14\%, for the smallest benchmark (\winogrande, 1{,}267 items).}
+    \label{tab:crosscheck}
+\end{table}
